@@ -33,7 +33,7 @@ app.get('/api/webtoons', (req, res) => {
 app.use('/image', express.static('./upload'));
 
 app.post('/api/webtoons', upload.single('image'), (req, res) => {
-	let sql = 'INSERT INTO WEBTOON VALUES (null, ?, ?, ?, ?, ?, now(), 0)';
+	let sql = 'INSERT INTO WEBTOON VALUES (null, ?, ?, ?, ?, ?, 0, now())';
 	let image = '/image/' + req.file.filename;
 	let name = req.body.name;
 	let createday = req.body.createday;
