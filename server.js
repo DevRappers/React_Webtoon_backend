@@ -25,7 +25,7 @@ connection.connect();
 const upload = multer({ dest: './upload' });
 
 app.get('/api/webtoons', (req, res) => {
-	connection.query('SELECT * FROM WEBTOON', (err, rows, fields) => {
+	connection.query('SELECT * FROM WEBTOON WHERE isDeleted=0', (err, rows, fields) => {
 		res.send(rows);
 	});
 });
@@ -33,7 +33,7 @@ app.get('/api/webtoons', (req, res) => {
 app.use('/image', express.static('./upload'));
 
 app.post('/api/webtoons', upload.single('image'), (req, res) => {
-	let sql = 'INSERT INTO WEBTOON VALUES (null, ?, ?, ?, ?, ?)';
+	let sql = 'INSERT INTO WEBTOON VALUES (null, ?, ?, ?, ?, ?, now(), 0)';
 	let image = '/image/' + req.file.filename;
 	let name = req.body.name;
 	let createday = req.body.createday;
@@ -43,6 +43,14 @@ app.post('/api/webtoons', upload.single('image'), (req, res) => {
 	connection.query(sql, params, (err, rows, field) => {
 		res.send(rows);
 		console.log(err);
+	});
+});
+
+app.delete('/api/webtoons/:id', (req, res) => {
+	let sql = 'UPDATE WEBTOON SET isDeleted = 1 WHERE id = ?';
+	let params = [ req.params.id ];
+	connection.query(sql, params, (err, rows, field) => {
+		res.send(rows);
 	});
 });
 
